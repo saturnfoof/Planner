@@ -11,14 +11,14 @@
             --bg-dark: #1a1a2e;
             --bg-dark-light: #1f2847;
             --text-light: #e0e0e0;
-            --accent-blue: #007bff;
+            --accent-blue: #007bff; /* Criar Post */
             --accent-blue-hover: #0056b3;
             --border-color: #333;
-            --danger-red: #f12a3e;
-            --success-green: #28a745;
-            --warning-orange: #fd7e14;
-            --info-cyan: #17a2b8;
-            --purple: #6f42c1;
+            --danger-red: #dc3545; /* Outros */
+            --success-green: #28a745; /* Pessoal */
+            --warning-orange: #fd7e14; /* Estudos */
+            --info-cyan: #17a2b8; /* Arranjar Ideias */
+            --purple: #6f42c1; /* Postar no Instagram */
         }
 
         body {
@@ -265,12 +265,12 @@
         }
 
         /* Cores das categorias */
-        .event-title.trabalho { background-color: var(--accent-blue); }
+        .event-title.criar-post { background-color: var(--accent-blue); }
         .event-title.pessoal { background-color: var(--success-green); }
         .event-title.estudos { background-color: var(--warning-orange); }
-        .event-title.saude { background-color: var(--danger-red); }
-        .event-title.lazer { background-color: var(--purple); }
-        .event-title.outros { background-color: var(--info-cyan); }
+        .event-title.postar-instagram { background-color: var(--purple); }
+        .event-title.arrancar-ideias { background-color: var(--info-cyan); }
+        .event-title.outros { background-color: var(--danger-red); }
 
         /* Modal styles */
         .modal-overlay {
@@ -358,7 +358,16 @@
             color: white;
             font-size: 0.9em;
             margin-bottom: 15px;
+            text-align: left;
         }
+        
+        /* Cores para a prévia da categoria no modal */
+        .category-preview.criar-post { background-color: var(--accent-blue); }
+        .category-preview.pessoal { background-color: var(--success-green); }
+        .category-preview.estudos { background-color: var(--warning-orange); }
+        .category-preview.postar-instagram { background-color: var(--purple); }
+        .category-preview.arrancar-ideias { background-color: var(--info-cyan); }
+        .category-preview.outros { background-color: var(--danger-red); }
 
         .modal-content .button-group {
             display: flex;
@@ -476,7 +485,7 @@
     </style>
 </head>
 <body>
-    <h1>🗓️ Meu Planejador de Postagens Avançado</h1>
+    <h1>��️ Meu Planejador de Postagens Avançado</h1>
 
     <!-- Barra de ferramentas -->
     <div class="toolbar">
@@ -511,15 +520,15 @@
             
             <label for="eventCategory">Categoria:</label>
             <select id="eventCategory">
-                <option value="trabalho">💼 Trabalho</option>
+                <option value="criar-post">✍️ Criar Post</option>
                 <option value="pessoal">👤 Pessoal</option>
                 <option value="estudos">📚 Estudos</option>
-                <option value="saude">🏥 Saúde</option>
-                <option value="lazer">🎮 Lazer</option>
+                <option value="postar-instagram">📸 Postar no Instagram</option>
+                <option value="arrancar-ideias">💡 Arranjar Ideias</option>
                 <option value="outros">📝 Outros</option>
             </select>
             
-            <div class="category-preview" id="categoryPreview">💼 Trabalho</div>
+            <div class="category-preview" id="categoryPreview">✍️ Criar Post</div>
             
             <label for="eventDescription">Descrição (opcional):</label>
             <textarea id="eventDescription" rows="4" placeholder="Detalhes da postagem"></textarea>
@@ -534,7 +543,7 @@
     </div>
 
     <footer>
-        site top de linha do saturnasso
+        Site pika das galáxias feito pelo Saturnasso
     </footer>
 
     <script>
@@ -575,22 +584,23 @@
         ];
         const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
+        // CATEGORIAS PERSONALIZADAS
         const categoryEmojis = {
-            trabalho: '🔨',
-            pessoal: '👤',
-            estudos: '📚',
-            saude: '📲',
-            lazer: '💡',
-            outros: '📝'
+            'criar-post': '✍️',
+            'pessoal': '��',
+            'estudos': '📚',
+            'postar-instagram': '📸',
+            'arrancar-ideias': '💡',
+            'outros': '📝'
         };
 
         const categoryNames = {
-            trabalho: 'Criar post',
-            pessoal: 'Pessoal',
-            estudos: 'Estudos',
-            saude: 'Postar no instagram',
-            lazer: 'Arranjar ideias',
-            outros: 'Outros'
+            'criar-post': 'Criar Post',
+            'pessoal': 'Pessoal',
+            'estudos': 'Estudos',
+            'postar-instagram': 'Postar no Instagram',
+            'arrancar-ideias': 'Arranjar Ideias',
+            'outros': 'Outros'
         };
 
         function showNotification(message, isError = false) {
@@ -673,6 +683,7 @@
                 dayCell.addEventListener('dragleave', handleDragLeave);
                 
                 dayCell.addEventListener('click', (e) => {
+                    // Evita abrir modal ao clicar no evento (para permitir drag)
                     if (!e.target.classList.contains('event-title')) {
                         openModal(fullDate);
                     }
@@ -680,8 +691,12 @@
                 
                 // Duplo clique em evento para editar
                 dayCell.addEventListener('dblclick', (e) => {
-                    if (e.target.classList.contains('event-title')) {
-                        openModal(fullDate);
+                    // Se o duplo clique for no evento, abre o modal para ele. Senão, abre para o dia.
+                    const targetEventElement = e.target.closest('.event-title');
+                    if (targetEventElement && events[fullDate]) {
+                        openModal(fullDate); // Abre o modal para editar o evento existente
+                    } else if (!targetEventElement) {
+                        openModal(fullDate); // Abre o modal para adicionar um novo evento no dia
                     }
                 });
                 
@@ -706,35 +721,51 @@
                 originalDate: e.target.dataset.date
             };
             e.target.classList.add('dragging');
+            // Armazena o ID do evento sendo arrastado (se houver múltiplos eventos no mesmo dia, precisaríamos de um ID único para cada)
+            // Para simplificar, estamos assumindo 1 evento por dia. Se houvesse mais, precisaríamos de uma lógica de ID mais complexa.
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                date: e.target.dataset.date,
+                title: e.target.textContent
+            }));
+            e.dataTransfer.effectAllowed = 'move';
         }
 
         function handleDragEnd(e) {
             e.target.classList.remove('dragging');
             draggedEvent = null;
+            // Limpa as classes drag-over de todas as células
+            document.querySelectorAll('.day-cell').forEach(cell => {
+                cell.classList.remove('drag-over');
+            });
         }
 
         function handleDragOver(e) {
-            e.preventDefault();
+            e.preventDefault(); // Necessário para permitir o drop
+            e.dataTransfer.dropEffect = 'move';
         }
 
         function handleDragEnter(e) {
-            if (e.target.classList.contains('day-cell')) {
-                e.target.classList.add('drag-over');
+            e.preventDefault();
+            const dayCell = e.target.closest('.day-cell');
+            if (dayCell) {
+                dayCell.classList.add('drag-over');
             }
         }
 
         function handleDragLeave(e) {
-            if (e.target.classList.contains('day-cell')) {
-                e.target.classList.remove('drag-over');
+            const dayCell = e.target.closest('.day-cell');
+            if (dayCell) {
+                dayCell.classList.remove('drag-over');
             }
         }
 
         function handleDrop(e) {
             e.preventDefault();
             const dayCell = e.target.closest('.day-cell');
-            if (dayCell && draggedEvent && dayCell.dataset.date) {
+            if (dayCell) {
                 const newDate = dayCell.dataset.date;
-                const originalDate = draggedEvent.originalDate;
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                const originalDate = data.date;
                 
                 if (newDate !== originalDate && events[originalDate]) {
                     // Move o evento
@@ -745,8 +776,7 @@
                     showNotification('Evento movido com sucesso!');
                 }
             }
-            
-            // Remove drag-over class de todas as células
+            // Limpa as classes drag-over de todas as células
             document.querySelectorAll('.day-cell').forEach(cell => {
                 cell.classList.remove('drag-over');
             });
@@ -758,7 +788,7 @@
 
             modalTitle.textContent = event ? 'Editar Postagem' : 'Nova Postagem';
             eventTitleInput.value = event ? event.title : '';
-            eventCategorySelect.value = event ? event.category : 'trabalho';
+            eventCategorySelect.value = event ? event.category : 'criar-post'; // Padrão 'Criar Post'
             eventDescriptionInput.value = event ? event.description : '';
             
             updateCategoryPreview();
@@ -840,7 +870,8 @@
 
             Object.entries(events).forEach(([date, event]) => {
                 if (event.title.toLowerCase().includes(queryLower) || 
-                    event.description.toLowerCase().includes(queryLower)) {
+                    event.description.toLowerCase().includes(queryLower) ||
+                    categoryNames[event.category].toLowerCase().includes(queryLower)) {
                     results.push({ date, event });
                 }
             });
@@ -941,7 +972,7 @@
             const now = new Date();
             const timeUntilEvent = eventDate.getTime() - now.getTime();
             
-            if (timeUntilEvent > 0) {
+            if (timeUntilEvent > 0 && Notification.permission === 'granted') {
                 setTimeout(() => {
                     new Notification('Lembrete de Postagem', {
                         body: `Hoje você tem: ${title}`,
@@ -975,9 +1006,14 @@
         });
 
         searchInput.addEventListener('blur', () => {
+            // Pequeno delay para permitir o clique nos resultados da busca
             setTimeout(() => {
                 searchResults.style.display = 'none';
             }, 200);
+        });
+        // Para garantir que o clique no resultado da busca funcione antes do blur fechar
+        searchResults.addEventListener('mousedown', (e) => {
+            e.preventDefault(); 
         });
 
         clearDayBtn.addEventListener('click', clearDay);
@@ -1007,5 +1043,4 @@
         renderCalendar();
     </script>
 </body>
-
 </html>
